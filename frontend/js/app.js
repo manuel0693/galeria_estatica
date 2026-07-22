@@ -82,7 +82,7 @@ function renderPhoto() {
 
     document.getElementById("photo-title").textContent = photo.title;
 
-    document.getElementById("photo-history").textContent = photo.history;
+    document.getElementById("photo-history").textContent = photo.description;
 
     document.getElementById("photo-author").textContent = photo.author;
 

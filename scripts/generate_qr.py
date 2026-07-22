@@ -1,36 +1,28 @@
 from pathlib import Path
+import re
 
 import qrcode
 
-
-# ==========================================================
-# CONFIGURACIÓN
-# ==========================================================
-
 BASE_URL = "https://manuel0693.github.io/galeria_estatica"
-
-# Cuando publiques en GitHub cambia por ejemplo a:
-# BASE_URL = "https://TU_USUARIO.github.io/GALERIA_ESTATICA"
-
-TOTAL_PHOTOS = 20
-
-
-# ==========================================================
-# RUTAS
-# ==========================================================
 
 ROOT = Path(__file__).resolve().parent.parent
 
+PHOTOS_FILE = ROOT / "frontend" / "js" / "photos.js"
 QR_DIR = ROOT / "frontend" / "qr"
 
 QR_DIR.mkdir(parents=True, exist_ok=True)
 
+content = PHOTOS_FILE.read_text(encoding="utf-8")
 
-# ==========================================================
-# GENERACIÓN
-# ==========================================================
+# Obtiene todos los ids definidos como: id: 1
+photo_ids = [
+    int(match)
+    for match in re.findall(r"id\s*:\s*(\d+)", content)
+]
 
-for photo_id in range(1, TOTAL_PHOTOS + 1):
+print(f"Fotografías encontradas: {len(photo_ids)}")
+
+for photo_id in photo_ids:
 
     url = f"{BASE_URL}/photo.html?id={photo_id}"
 
@@ -44,12 +36,15 @@ for photo_id in range(1, TOTAL_PHOTOS + 1):
     qr.add_data(url)
     qr.make(fit=True)
 
-    image = qr.make_image(fill_color="black", back_color="white")
+    image = qr.make_image(
+        fill_color="black",
+        back_color="white",
+    )
 
     filename = QR_DIR / f"foto_{photo_id:02}.png"
 
     image.save(filename)
 
-    print(f"✔ Generado: {filename.name} -> {url}")
+    print(f"✔ {filename.name} -> {url}")
 
-print("\nTodos los códigos QR fueron generados correctamente.")
+print("\nTodos los QR fueron generados.")
